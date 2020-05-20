@@ -242,7 +242,38 @@ public abstract class HangingServiceRequestBase<T> extends ServiceRequestBase<T>
       // Stream is closed, so disconnect.
       this.disconnect(HangingRequestDisconnectReason.Exception, ex);
     } finally {
-      IOUtils.closeQuietly(responseCopy);
+      // [NINE]
+      try {
+        IOUtils.closeQuietly(responseCopy);
+
+      } catch (java.lang.Exception ignorable) {
+
+        /*
+        Fatal Exception: java.lang.ArrayIndexOutOfBoundsException: length=8192; regionStart=-618; regionLength=8810
+       at com.android.org.conscrypt.util.ArrayUtils.checkOffsetAndCount(ArrayUtils.java:34)
+       at com.android.org.conscrypt.OpenSSLSocketImpl$SSLInputStream.read(OpenSSLSocketImpl.java:744)
+       at android.org.apache.http.impl.conn.LoggingInputStream.read(ProGuard:87)
+       at android.org.apache.http.impl.io.SessionInputBufferImpl.streamRead(ProGuard:139)
+       at android.org.apache.http.impl.io.SessionInputBufferImpl.fillBuffer(ProGuard:155)
+       at android.org.apache.http.impl.io.SessionInputBufferImpl.read(ProGuard:208)
+       at android.org.apache.http.impl.io.ChunkedInputStream.read(ProGuard:191)
+       at android.org.apache.http.impl.io.ChunkedInputStream.read(ProGuard:215)
+       at android.org.apache.http.impl.io.ChunkedInputStream.close(ProGuard:316)
+       at android.org.apache.http.impl.execchain.ResponseEntityProxy.streamClosed(ProGuard:128)
+       at android.org.apache.http.conn.EofSensorInputStream.checkClose(ProGuard:228)
+       at android.org.apache.http.conn.EofSensorInputStream.close(ProGuard:174)
+       at android.org.apache.http.util.EntityUtils.consume(ProGuard:88)
+       at microsoft.exchange.webservices.data.core.request.HttpClientWebRequest.close(ProGuard:85)
+       at android.org.apache.commons.io.IOUtils.closeQuietly(ProGuard:303)
+       at microsoft.exchange.webservices.data.core.request.HangingServiceRequestBase.disconnect(ProGuard:282)
+       at microsoft.exchange.webservices.data.core.request.HangingServiceRequestBase.parseResponses(ProGuard:243)
+       at microsoft.exchange.webservices.data.core.request.HangingServiceRequestBase.access$000(ProGuard:61)
+       at microsoft.exchange.webservices.data.core.request.HangingServiceRequestBase$1.run(ProGuard:316)
+       at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1133)
+       at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:607)
+       at java.lang.Thread.run(Thread.java:761)
+        */
+      }
     }
   }
 
@@ -266,7 +297,11 @@ public abstract class HangingServiceRequestBase<T> extends ServiceRequestBase<T>
    */
   public void disconnect() {
     synchronized (this) {
-      IOUtils.closeQuietly(this.response);
+      // [Nine]
+      try {
+        IOUtils.closeQuietly(this.response);
+      } catch (java.lang.Exception ignorable) {
+      }
       this.disconnect(HangingRequestDisconnectReason.UserInitiated, null);
     }
   }
@@ -279,7 +314,11 @@ public abstract class HangingServiceRequestBase<T> extends ServiceRequestBase<T>
    */
   public void disconnect(HangingRequestDisconnectReason reason, Exception exception) {
     if (this.isConnected()) {
-      IOUtils.closeQuietly(this.response);
+      // [NINE]
+      try {
+        IOUtils.closeQuietly(this.response);
+      } catch (java.lang.Exception ignorable) {
+      }
       this.internalOnDisconnect(reason, exception);
     }
   }
