@@ -544,7 +544,8 @@ public final class PropertySet implements ISelfValidate,
             XmlNamespace.Messages,
             serviceObjectType == ServiceObjectType.Item ?
                 XmlElementNames.ItemShape
-                : XmlElementNames.FolderShape);
+                : serviceObjectType == ServiceObjectType.Persona ?
+                    XmlElementNames.PersonaShape:XmlElementNames.FolderShape);
 
     writer.writeElementValue(XmlNamespace.Types, XmlElementNames.BaseShape,
         this.getBasePropertySet().getBaseShapeValue());

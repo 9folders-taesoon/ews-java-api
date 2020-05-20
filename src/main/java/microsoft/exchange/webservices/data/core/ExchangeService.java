@@ -30,13 +30,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 
 import microsoft.exchange.webservices.data.autodiscover.AutodiscoverService;
 import microsoft.exchange.webservices.data.autodiscover.IAutodiscoverRedirectionUrl;
@@ -90,6 +88,7 @@ import microsoft.exchange.webservices.data.core.request.ExpandGroupRequest;
 import microsoft.exchange.webservices.data.core.request.FindConversationRequest;
 import microsoft.exchange.webservices.data.core.request.FindFolderRequest;
 import microsoft.exchange.webservices.data.core.request.FindItemRequest;
+import microsoft.exchange.webservices.data.core.request.FindPeopleRequest;
 import microsoft.exchange.webservices.data.core.request.GetAttachmentRequest;
 import microsoft.exchange.webservices.data.core.request.GetDelegateRequest;
 import microsoft.exchange.webservices.data.core.request.GetEventsRequest;
@@ -163,6 +162,7 @@ import microsoft.exchange.webservices.data.misc.availability.AvailabilityOptions
 import microsoft.exchange.webservices.data.misc.availability.GetUserAvailabilityResults;
 import microsoft.exchange.webservices.data.misc.availability.TimeWindow;
 import microsoft.exchange.webservices.data.misc.id.AlternateIdBase;
+import microsoft.exchange.webservices.data.misc.people.IndexedPageItemView;
 import microsoft.exchange.webservices.data.notification.GetEventsResults;
 import microsoft.exchange.webservices.data.notification.PullSubscription;
 import microsoft.exchange.webservices.data.notification.PushSubscription;
@@ -175,6 +175,7 @@ import microsoft.exchange.webservices.data.property.complex.EmailAddressCollecti
 import microsoft.exchange.webservices.data.property.complex.FolderId;
 import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.property.complex.Mailbox;
+import microsoft.exchange.webservices.data.property.complex.Persona;
 import microsoft.exchange.webservices.data.property.complex.RuleCollection;
 import microsoft.exchange.webservices.data.property.complex.RuleOperation;
 import microsoft.exchange.webservices.data.property.complex.StringList;
@@ -1599,6 +1600,14 @@ public class ExchangeService extends ExchangeServiceBase implements IAutodiscove
   public NameResolutionCollection resolveName(String nameToResolve)
       throws Exception {
     return this.resolveName(nameToResolve, ResolveNameSearchLocation.ContactsThenDirectory, false);
+  }
+
+  public List<Persona> findPeople(IndexedPageItemView view, FolderId folderId) throws Exception {
+    FindPeopleRequest request = new FindPeopleRequest(this);
+
+    request.setFolderId(new FolderIdWrapper(folderId));
+    request.setIndexedItemView(view);
+    return request.execute().getPersonaList();
   }
 
   /**

@@ -89,6 +89,34 @@ public class XmlElementNames {
   public static final String BaseShape = "BaseShape";
 
   /**
+   * The Constant PersonaShape.
+   */
+  public static final String PersonaShape = "PersonaShape";
+
+  /**
+   * Persona
+   */
+  public static final String Persona = "Persona";
+
+
+  public static final String PersonaId = "PersonaId";
+
+  public static final String PersonaType = "PersonaType";
+
+  public static final String CreationTime = "CreationTime";
+
+  public static final String DisplayNameFirstLast = "DisplayNameFirstLast";
+
+  public static final String DisplayNameLastFirst = "DisplayNameLastFirst";
+
+  public static final String RelevanceScore = "RelevanceScore";
+
+  public static final String TotalNumberOfPeopleInView ="TotalNumberOfPeopleInView";
+  public static final String FirstMatchingRowIndex ="FirstMatchingRowIndex";
+  public static final String FirstLoadedRowIndex ="FirstLoadedRowIndex";
+  public static final String FindPeopleTransactionId ="FindPeopleTransactionId";
+
+  /**
    * The Constant IndexedPageItemView.
    */
   public static final String IndexedPageItemView = "IndexedPageItemView";
@@ -223,6 +251,21 @@ public class XmlElementNames {
    * The Constant ReplyTo.
    */
   public static final String ReplyTo = "ReplyTo";
+
+  /**
+   * The FindPeople.
+   */
+  public static final String FindPeople = "FindPeople";
+
+  /**
+   * The FindPeopleResponse.
+   */
+  public static final String FindPeopleResponse = "FindPeopleResponse";
+
+  /**
+   * The People
+   */
+  public static final String People = "People";
 
   /**
    * The Constant ConversationTopic.
@@ -4782,7 +4825,10 @@ public class XmlElementNames {
    */
   public static final String EwsExceptionTypeElementName = "ExceptionType"; // Generated
 
+
   // by
   // UM
+
+
 
 }

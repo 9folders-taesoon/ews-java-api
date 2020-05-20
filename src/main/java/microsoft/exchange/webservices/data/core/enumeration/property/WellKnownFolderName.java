@@ -127,6 +127,8 @@ public enum WellKnownFolderName {
    */
   VoiceMail,
 
+  Directory,
+
   /**
    * The Dumpster 2.0 root folder.
    */
@@ -193,6 +195,5 @@ public enum WellKnownFolderName {
    */
   @RequiredServerVersion(version = ExchangeVersion.Exchange2010_SP1)
   ArchiveRecoverableItemsPurges,
-
 
 }

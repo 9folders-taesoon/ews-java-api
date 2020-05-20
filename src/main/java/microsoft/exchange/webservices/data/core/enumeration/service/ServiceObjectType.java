@@ -44,5 +44,10 @@ public enum ServiceObjectType {
   /**
    * The Conversation.
    */
-  Conversation
+  Conversation,
+
+  /**
+   * Data represents a persona
+   */
+  Persona,
 }
