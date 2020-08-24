@@ -23,13 +23,19 @@
 
 package microsoft.exchange.webservices.data.core;
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
+import com.sun.org.apache.xerces.internal.impl.Constants;
+import com.sun.org.apache.xerces.internal.impl.XMLErrorReporter;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Represents an xml reader used by the ExchangeService to parse multi-response streams,
@@ -45,6 +51,9 @@ import java.io.InputStreamReader;
  */
 public class EwsServiceMultiResponseXmlReader extends EwsServiceXmlReader {
 
+  private static final Log LOG = LogFactory.getLog(EwsServiceMultiResponseXmlReader.class);
+
+
   /**
    * Initializes a new instance of the
    * EwsServiceMultiResponseXmlReader class.
@@ -53,8 +62,7 @@ public class EwsServiceMultiResponseXmlReader extends EwsServiceXmlReader {
    * @param service The service.
    * @throws Exception
    */
-  private EwsServiceMultiResponseXmlReader(InputStream stream,
-      ExchangeService service) throws Exception {
+  private EwsServiceMultiResponseXmlReader(InputStream stream, ExchangeService service) throws Exception {
     super(stream, service);
   }
 
@@ -74,20 +82,35 @@ public class EwsServiceMultiResponseXmlReader extends EwsServiceXmlReader {
    * Creates the XML reader.
    *
    * @param stream The stream
-   * @return an XML reader to use
+   * @return an XML reader to usel
    * @throws XMLStreamException the XML stream exception
    */
-  private static XMLEventReader createXmlReader(InputStream stream)
+  private static XMLEventReader createXmlReader(InputStream stream, boolean ignoreErrors)
       throws XMLStreamException {
 
-    // E14:240522 The ProhibitDtd property is used to indicate whether XmlReader should process DTDs or not. By default,
-    // it will do so. EWS doesn't use DTD references so we want to turn this off. Also, the XmlResolver property is
-    // set to an instance of XmlUrlResolver by default. We don't want XmlTextReader to try to resolve this DTD reference
-    // so we disable the XmlResolver as well.
     XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+    inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
     InputStreamReader isr = new InputStreamReader(stream);
     BufferedReader in = new BufferedReader(isr);
-    return inputFactory.createXMLEventReader(in);
+    XMLEventReader reader = inputFactory.createXMLEventReader(in);
+    if (ignoreErrors) {
+      //continue after fatal error to prevent "invalid character reference"
+      XMLErrorReporter
+          errorReporter =
+          (XMLErrorReporter) reader
+              .getProperty(Constants.XERCES_PROPERTY_PREFIX + Constants.ERROR_REPORTER_PROPERTY);
+
+      if (errorReporter != null) {
+        errorReporter
+            .setFeature(Constants.XERCES_FEATURE_PREFIX + Constants.CONTINUE_AFTER_FATAL_ERROR_FEATURE, true);
+      } else {
+        LOG.warn(
+            "Failed to configure ignore errors for the XML Reader. Expected the Xerces parser implementation.");
+      }
+    }
+
+    return reader;
   }
 
 
@@ -98,9 +121,8 @@ public class EwsServiceMultiResponseXmlReader extends EwsServiceXmlReader {
    * @throws Exception on error
    */
   @Override
-  protected XMLEventReader initializeXmlReader(InputStream stream)
-      throws Exception {
-    return createXmlReader(stream);
+  protected XMLEventReader initializeXmlReader(InputStream stream, boolean ignoreErrors) throws Exception {
+    return createXmlReader(stream, true);
   }
 
 }

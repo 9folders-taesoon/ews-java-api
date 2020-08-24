@@ -23,6 +23,7 @@
 
 package microsoft.exchange.webservices.data.core;
 
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -1539,6 +1540,21 @@ public class ExchangeService extends ExchangeServiceBase implements IAutodiscove
     this.internalGetAttachments(attachmentArray, bodyType, additionalProperties,
                                 ServiceErrorHandling.ThrowOnError);
 
+  }
+
+  /**
+   * Streams the response from a getAttachment request to the specified OutputStream.
+   *
+   * @param attachment           the attachment
+   * @param outputStream         the stream to put the response into.
+   * @throws Exception the exception
+   */
+  public void streamAttachment(Attachment attachment, OutputStream outputStream)
+      throws Exception {
+
+    GetAttachmentRequest request = new GetAttachmentRequest(this, ServiceErrorHandling.ThrowOnError);
+    request.getAttachments().add(attachment);
+    request.execute(outputStream);
   }
 
   /**
