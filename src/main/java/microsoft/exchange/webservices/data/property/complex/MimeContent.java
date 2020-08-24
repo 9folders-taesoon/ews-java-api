@@ -23,14 +23,23 @@
 
 package microsoft.exchange.webservices.data.property.complex;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+
+import javax.xml.stream.XMLStreamException;
+
 import microsoft.exchange.webservices.data.core.EwsServiceXmlReader;
 import microsoft.exchange.webservices.data.core.EwsServiceXmlWriter;
 import microsoft.exchange.webservices.data.core.XmlAttributeNames;
 import microsoft.exchange.webservices.data.core.exception.service.local.ServiceXmlDeserializationException;
 import microsoft.exchange.webservices.data.core.exception.service.local.ServiceXmlSerializationException;
-import org.apache.commons.codec.binary.Base64;
-
-import javax.xml.stream.XMLStreamException;
+import microsoft.exchange.webservices.data.util.FileUtils;
 
 /**
  * Represents the MIME content of an item.
@@ -45,7 +54,7 @@ public final class MimeContent extends ComplexProperty {
   /**
    * The content.
    */
-  private byte[] content;
+  private InputStream contentReader;
 
   /**
    * Initializes a new instance of the class.
@@ -59,10 +68,16 @@ public final class MimeContent extends ComplexProperty {
    * @param characterSet the character set
    * @param content      the content
    */
-  public MimeContent(String characterSet, byte[] content) {
+  public MimeContent(String characterSet, byte[] content) throws UnsupportedEncodingException {
     this();
     this.characterSet = characterSet;
-    this.content = content;
+    this.contentReader = new ByteArrayInputStream(content);
+  }
+
+  public MimeContent(InputStream reader) {
+    this();
+    this.contentReader = reader;
+
   }
 
   /**
@@ -88,7 +103,7 @@ public final class MimeContent extends ComplexProperty {
   @Override
   public void readTextValueFromXml(EwsServiceXmlReader reader)
       throws XMLStreamException, ServiceXmlDeserializationException {
-    this.content = Base64.decodeBase64(reader.readValue());
+    this.contentReader = new ByteArrayInputStream(Base64.decodeBase64(reader.readValue()));
   }
 
   /**
@@ -112,8 +127,15 @@ public final class MimeContent extends ComplexProperty {
    */
   public void writeElementsToXml(EwsServiceXmlWriter writer)
       throws XMLStreamException {
-    if (this.content != null && this.content.length > 0) {
-      writer.writeBase64ElementValue(this.content);
+    if (this.contentReader != null) {
+      try {
+        writer.writeBase64ElementValue(this.contentReader);
+      } catch (IOException e) {
+        throw new XMLStreamException(e);
+      } finally {
+        IOUtils.closeQuietly(contentReader);
+        contentReader = null;
+      }
     }
   }
 
@@ -141,7 +163,20 @@ public final class MimeContent extends ComplexProperty {
    * @return the content
    */
   public byte[] getContent() {
-    return this.content;
+    if (contentReader != null) {
+      ByteArrayOutputStream output = new ByteArrayOutputStream(4096);
+      try {
+        FileUtils.copyLarge(contentReader, output);
+      } catch (Exception e) {
+        e.printStackTrace();
+      } finally {
+        IOUtils.closeQuietly(output);
+      }
+      
+      return output.toByteArray();
+    }
+
+    return null;
   }
 
   /**
@@ -150,7 +185,7 @@ public final class MimeContent extends ComplexProperty {
    * @param content the new content
    */
   public void setContent(byte[] content) {
-    this.canSetFieldValue(this.content, content);
+    this.contentReader = new ByteArrayInputStream(content);
   }
 
   /**
