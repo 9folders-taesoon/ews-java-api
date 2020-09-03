@@ -3,7 +3,7 @@ package microsoft.exchange.webservices.data.property.complex;
 import microsoft.exchange.webservices.data.core.EwsServiceXmlReader;
 import microsoft.exchange.webservices.data.core.XmlElementNames;
 
-public class Persona extends ComplexProperty {
+public class PersonaData extends ComplexProperty {
     private String personaId;
     private String personaType;
     private String displayName;
@@ -17,7 +17,7 @@ public class Persona extends ComplexProperty {
     /**
      * Initializes a new instance of the Persona class.
      */
-    public Persona() {
+    public PersonaData() {
         super();
     }
 

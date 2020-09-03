@@ -99,6 +99,7 @@ import microsoft.exchange.webservices.data.core.request.GetInboxRulesRequest;
 import microsoft.exchange.webservices.data.core.request.GetItemRequest;
 import microsoft.exchange.webservices.data.core.request.GetItemRequestForLoad;
 import microsoft.exchange.webservices.data.core.request.GetPasswordExpirationDateRequest;
+import microsoft.exchange.webservices.data.core.request.GetPersonaRequest;
 import microsoft.exchange.webservices.data.core.request.GetRoomListsRequest;
 import microsoft.exchange.webservices.data.core.request.GetRoomsRequest;
 import microsoft.exchange.webservices.data.core.request.GetServerTimeZonesRequest;
@@ -146,6 +147,7 @@ import microsoft.exchange.webservices.data.core.service.folder.Folder;
 import microsoft.exchange.webservices.data.core.service.item.Appointment;
 import microsoft.exchange.webservices.data.core.service.item.Conversation;
 import microsoft.exchange.webservices.data.core.service.item.Item;
+import microsoft.exchange.webservices.data.core.service.item.Persona;
 import microsoft.exchange.webservices.data.messaging.UnifiedMessaging;
 import microsoft.exchange.webservices.data.misc.AsyncCallback;
 import microsoft.exchange.webservices.data.misc.AsyncRequestResult;
@@ -176,9 +178,11 @@ import microsoft.exchange.webservices.data.property.complex.EmailAddressCollecti
 import microsoft.exchange.webservices.data.property.complex.FolderId;
 import microsoft.exchange.webservices.data.property.complex.ItemId;
 import microsoft.exchange.webservices.data.property.complex.Mailbox;
-import microsoft.exchange.webservices.data.property.complex.Persona;
+import microsoft.exchange.webservices.data.property.complex.PersonaData;
+import microsoft.exchange.webservices.data.property.complex.PersonaId;
 import microsoft.exchange.webservices.data.property.complex.RuleCollection;
 import microsoft.exchange.webservices.data.property.complex.RuleOperation;
+import microsoft.exchange.webservices.data.property.complex.ServiceId;
 import microsoft.exchange.webservices.data.property.complex.StringList;
 import microsoft.exchange.webservices.data.property.complex.UserId;
 import microsoft.exchange.webservices.data.property.complex.availability.OofSettings;
@@ -1618,11 +1622,19 @@ public class ExchangeService extends ExchangeServiceBase implements IAutodiscove
     return this.resolveName(nameToResolve, ResolveNameSearchLocation.ContactsThenDirectory, false);
   }
 
-  public List<Persona> findPeople(IndexedPageItemView view, FolderId folderId) throws Exception {
+  public List<Persona> findPeople(ViewBase view, ServiceId folderId, SearchFilter searchFilter, String query) throws Exception {
     FindPeopleRequest request = new FindPeopleRequest(this);
 
-    request.setFolderId(new FolderIdWrapper(folderId));
+    request.setFolderId(folderId);
+    request.setSearchFilter(searchFilter);
     request.setIndexedItemView(view);
+    request.setQuery(query);
+    return request.execute().getPersonaList();
+  }
+
+  public List<Persona> getPersona(List<PersonaId> personaIds) throws Exception {
+    GetPersonaRequest request = new GetPersonaRequest(this);
+    request.setPersonaIdList(personaIds);
     return request.execute().getPersonaList();
   }
 

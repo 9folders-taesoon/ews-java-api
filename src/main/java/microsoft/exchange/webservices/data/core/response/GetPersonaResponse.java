@@ -32,12 +32,11 @@ import microsoft.exchange.webservices.data.core.XmlElementNames;
 import microsoft.exchange.webservices.data.core.enumeration.misc.XmlNamespace;
 import microsoft.exchange.webservices.data.core.service.item.Persona;
 import microsoft.exchange.webservices.data.property.complex.PersonaData;
-import microsoft.exchange.webservices.data.security.XmlNodeType;
 
 /**
  * Represents the response to a name resolution operation.
  */
-public final class FindPeopleResponse extends ServiceResponse {
+public final class GetPersonaResponse extends ServiceResponse {
 
   /**
    * The people lists.
@@ -47,7 +46,7 @@ public final class FindPeopleResponse extends ServiceResponse {
   /**
    * Represents the response to a FindPeopleResponse operation.
    */
-  public FindPeopleResponse() {
+  public GetPersonaResponse() {
     super();
   }
 
@@ -70,49 +69,22 @@ public final class FindPeopleResponse extends ServiceResponse {
   protected void readElementsFromXml(EwsServiceXmlReader reader)
           throws Exception {
     this.personaList.clear();
-    reader.readStartElement(XmlNamespace.Messages, XmlElementNames.People);
+    super.readElementsFromXml(reader);
 
     if (!reader.isEmptyElement()) {
-      XmlNodeType element = new XmlNodeType(XmlNodeType.START_ELEMENT);
-      do {
-        reader.read();
-        if (reader.getNodeType().equals(element)) {
-          Persona persona = EwsUtilities.createEwsObjectFromXmlElementName(Persona.class, reader.getService(), reader.getLocalName());
-          if (persona == null) {
-            reader.skipCurrentElement();
-          } else {
-            persona.loadFromXml(reader, false, null, false);
-            this.personaList.add(persona);
-          }
-        }
-
-      } while (!reader.isEndElement(XmlNamespace.Messages, XmlElementNames.People));
-
+      // Because we don't have an element for count of returned object,
+      // we have to test the element to determine if it is return object
+      // or EndElement
       reader.read();
 
-      if (reader.isStartElement(XmlNamespace.Messages, XmlElementNames.TotalNumberOfPeopleInView)
-              && !reader.isEmptyElement()) {
-        reader.read();
-      }
-
-      if (reader.isStartElement(XmlNamespace.Messages, XmlElementNames.FirstMatchingRowIndex)
-              && !reader.isEmptyElement()) {
-        reader.read();
-      }
-
-
-      if (reader.isStartElement(XmlNamespace.Messages, XmlElementNames.FirstLoadedRowIndex)
-              && !reader.isEmptyElement()) {
-        reader.read();
-      }
-
-      if (reader.isStartElement(XmlNamespace.Messages, XmlElementNames.FindPeopleTransactionId)
-              && !reader.isEmptyElement()) {
+      while (reader.isStartElement(XmlNamespace.Types, XmlElementNames.Persona)) {
+        Persona item = EwsUtilities.createEwsObjectFromXmlElementName(Persona.class, reader.getService(), reader.getLocalName());
+        this.personaList.add(item);
         reader.read();
       }
 
       // Future proof by skipping any additional elements before returning
-      while (!reader.isEndElement(XmlNamespace.Messages, XmlElementNames.FindPeopleResponse)) {
+      while (!reader.isEndElement(XmlNamespace.Messages, XmlElementNames.GetPersonaResponseMessage)) {
         reader.read();
       }
     } else {

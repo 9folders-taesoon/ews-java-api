@@ -58,6 +58,8 @@ public class XmlElementNames {
    */
   public static final String FolderId = "FolderId";
 
+  public static final String AddressListId = "AddressListId";
+
   /**
    * The Constant FolderIds.
    */
@@ -92,11 +94,18 @@ public class XmlElementNames {
    * The Constant PersonaShape.
    */
   public static final String PersonaShape = "PersonaShape";
+  public static final String Departments = "Departments";
+  public static final String ThirdPartyPhotoUrls = "ThirdPartyPhotoUrls";
+  public static final String Number = "Number";
+  public static final String MobilePhones = "MobilePhones";
+  public static final String OfficeLocations = "OfficeLocations";
 
   /**
    * Persona
    */
   public static final String Persona = "Persona";
+
+  public static final String GetPersona = "GetPersona";
 
 
   public static final String PersonaId = "PersonaId";
@@ -108,6 +117,9 @@ public class XmlElementNames {
   public static final String DisplayNameFirstLast = "DisplayNameFirstLast";
 
   public static final String DisplayNameLastFirst = "DisplayNameLastFirst";
+
+  public static final String DisplayNameFirstLastHeader = "DisplayNameFirstLastHeader";
+  public static final String DisplayNameLastFirstHeader = "DisplayNameLastFirstHeader";
 
   public static final String RelevanceScore = "RelevanceScore";
 
@@ -261,6 +273,8 @@ public class XmlElementNames {
    * The FindPeopleResponse.
    */
   public static final String FindPeopleResponse = "FindPeopleResponse";
+
+  public static final String GetPersonaResponseMessage = "GetPersonaResponseMessage";
 
   /**
    * The People
@@ -1131,6 +1145,11 @@ public class XmlElementNames {
    */
   public static final String Generation = "Generation";
 
+  public static final String DisplayNamePrefix = "DisplayNamePrefix";
+
+  public static final String HomeCity = "HomeCity";
+
+  public static final String WorkCity = "WorkCity";
   /**
    * The Constant ImAddresses.
    */
@@ -2518,6 +2537,22 @@ public class XmlElementNames {
    * The Constant Id.
    */
   public static final String Id = "Id";
+
+  public static final String SourceId = "SourceId";
+
+  public static final String IsWritable = "IsWritable";
+
+  public static final String IsQuickContact = "IsQuickContact";
+
+  public static final String IsHidden = "IsHidden";
+
+  public static final String Attributions = "Attributions";
+
+  public static final String Attribution = "Attribution";
+
+  public static final String StringAttributedValue = "StringAttributedValue";
+
+  public static final String PhoneNumberAttributedValue = "PhoneNumberAttributedValue";
 
   /**
    * The Constant TimeZoneDefinitions.

@@ -40,6 +40,7 @@ import microsoft.exchange.webservices.data.core.service.item.MeetingCancellation
 import microsoft.exchange.webservices.data.core.service.item.MeetingMessage;
 import microsoft.exchange.webservices.data.core.service.item.MeetingRequest;
 import microsoft.exchange.webservices.data.core.service.item.MeetingResponse;
+import microsoft.exchange.webservices.data.core.service.item.Persona;
 import microsoft.exchange.webservices.data.core.service.item.PostItem;
 import microsoft.exchange.webservices.data.core.service.item.Task;
 import microsoft.exchange.webservices.data.property.complex.ItemAttachment;
@@ -318,6 +319,15 @@ public class ServiceObjectInfo {
             return new TasksFolder(srv);
           }
         }, null);
+
+
+      this.addServiceObjectType(XmlElementNames.Persona,
+              Persona.class, new ICreateServiceObjectWithServiceParam() {
+                  public Object createServiceObjectWithServiceParam(
+                          ExchangeService srv) throws Exception {
+                      return new Persona(srv);
+                  }
+              }, null);
   }
 
   /**

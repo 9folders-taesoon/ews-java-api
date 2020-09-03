@@ -6,15 +6,32 @@ import microsoft.exchange.webservices.data.core.ExchangeService;
 import microsoft.exchange.webservices.data.core.XmlElementNames;
 import microsoft.exchange.webservices.data.core.enumeration.misc.ExchangeVersion;
 import microsoft.exchange.webservices.data.core.enumeration.misc.XmlNamespace;
+import microsoft.exchange.webservices.data.core.enumeration.service.ServiceObjectType;
 import microsoft.exchange.webservices.data.core.response.FindPeopleResponse;
-import microsoft.exchange.webservices.data.misc.FolderIdWrapper;
-import microsoft.exchange.webservices.data.misc.people.IndexedPageItemView;
+import microsoft.exchange.webservices.data.property.complex.FolderId;
+import microsoft.exchange.webservices.data.property.complex.ServiceId;
+import microsoft.exchange.webservices.data.search.ViewBase;
+import microsoft.exchange.webservices.data.search.filter.SearchFilter;
 
 public class FindPeopleRequest extends SimpleServiceRequestBase<FindPeopleResponse> {
 
-    private FolderIdWrapper folderId;
+    /**
+     * The search filter.
+     */
+    private SearchFilter searchFilter;
 
-    private IndexedPageItemView view;
+    /**
+     * The query string.
+     */
+    private String queryString;
+
+    /**
+     * The view.
+     */
+    private ViewBase view;
+
+    private ServiceId folderId;
+
     /**
      * Initializes a new instance of the class.
      *
@@ -29,23 +46,29 @@ public class FindPeopleRequest extends SimpleServiceRequestBase<FindPeopleRespon
     /**
      * Gets or sets folder id
      */
-    protected FolderIdWrapper getFolderId() {
+    protected ServiceId getFolderId() {
         return this.folderId;
     }
 
-    public void setFolderId(FolderIdWrapper value) {
+    public void setQuery(String query) {
+        this.queryString = query;
+    }
+
+    public void setFolderId(ServiceId value) {
         this.folderId = value;
     }
 
+    public void setSearchFilter(SearchFilter searchFilter) {
+        this.searchFilter = searchFilter;
+    }
 
-    protected IndexedPageItemView getIndexedItemView() {
+    protected ViewBase getIndexedItemView() {
         return this.view;
     }
 
-    public void setIndexedItemView(IndexedPageItemView value) {
+    public void setIndexedItemView(ViewBase value) {
         this.view = value;
     }
-
 
     /**
      * Gets the name of the XML element.
@@ -57,6 +80,7 @@ public class FindPeopleRequest extends SimpleServiceRequestBase<FindPeopleRespon
         return XmlElementNames.FindPeople;
     }
 
+
     /**
      * Writes XML elements.
      *
@@ -64,18 +88,34 @@ public class FindPeopleRequest extends SimpleServiceRequestBase<FindPeopleRespon
      */
     @Override
     protected void writeElementsToXml(EwsServiceXmlWriter writer) throws Exception {
-        // Don't have parameter in request
 
-        this.getIndexedItemView().writeToXml(writer);
-        this.getIndexedItemView().writeOrderByToXml(writer);
+        if (searchFilter != null) {
+            writer.writeStartElement(XmlNamespace.Messages,
+                    XmlElementNames.Restriction);
+            searchFilter.writeToXml(writer);
+            writer.writeEndElement(); // Restriction
+        }
 
-        writer.writeStartElement(XmlNamespace.Messages,
-                XmlElementNames.ParentFolderId);
-        this.getFolderId().writeToXml(writer);
-        writer.writeEndElement();
+        view.writeToXml(writer, null);
+        view.writeOrderByToXml(writer);
 
-        writer.writeElementValue(XmlNamespace.Messages,
-                XmlElementNames.QueryString, "SMTP:");
+        if (this.folderId != null) {
+            writer.writeStartElement(XmlNamespace.Messages, XmlElementNames.ParentFolderId);
+            this.folderId.writeToXml(writer);
+            writer.writeEndElement();
+        }
+
+        if (!(this.queryString == null || this.queryString.isEmpty())) {
+            writer.writeStartElement(XmlNamespace.Messages, XmlElementNames.QueryString);
+            writer.writeValue(queryString, XmlElementNames.QueryString);
+            writer.writeEndElement();
+        }
+
+        if (getService().getRequestedServerVersion().ordinal() >= this.getMinimumRequiredServerVersion().ordinal()){
+            if (view.getPropertySet() != null) {
+                view.getPropertySet().writeToXml(writer, ServiceObjectType.Persona);
+            }
+        }
     }
 
     /**
